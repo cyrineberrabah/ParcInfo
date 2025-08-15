@@ -1,0 +1,27 @@
+﻿@model parc_App.Models.Preneur
+
+<h2>Détails du preneur</h2>
+
+<div class="card mt-4">
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">Nom</dt>
+            <dd class="col-sm-9">@Model.Nom</dd>
+
+            <dt class="col-sm-3">Prénom</dt>
+            <dd class="col-sm-9">@Model.Prenom</dd>
+
+            <dt class="col-sm-3">Email</dt>
+            <dd class="col-sm-9">@Model.Email</dd>
+
+            <dt class="col-sm-3">Téléphone</dt>
+            <dd class="col-sm-9">@Model.Telephone</dd>
+
+            <dt class="col-sm-3">Département</dt>
+            <dd class="col-sm-9">@Model.Departement</dd>
+        </dl>
+
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary me-2">Modifier</a>
+        <a asp-action="Index" class="btn btn-secondary">Retour à la liste</a>
+    </div>
+</div>

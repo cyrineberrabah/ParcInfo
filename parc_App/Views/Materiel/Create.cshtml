@@ -1,0 +1,388 @@
+﻿@namespace parc_App.ViewModel
+@model parc_App.ViewModel.MaterielCreateViewModel
+
+@{
+    ViewData["Title"] = "Ajouter un matériel";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="TypeMateriel"></label>
+        <select asp-for="TypeMateriel" class="form-control" id="typeMaterielSelect" required>
+            <option value="">-- Sélectionnez le type --</option>
+            <option value="PC">PC</option>
+            <option value="Imprimante">Imprimante</option>
+            <option value="Serveur">Serveur</option>
+            <option value="Scanner">Scanner</option>
+            <option value="Écran">Écran</option>
+        </select>
+        <span asp-validation-for="TypeMateriel" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Marque"></label>
+        <input asp-for="Marque" class="form-control" />
+        <span asp-validation-for="Marque" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Modele"></label>
+        <input asp-for="Modele" class="form-control" />
+        <span asp-validation-for="Modele" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="NumeroSerie"></label>
+        <input asp-for="NumeroSerie" class="form-control" />
+        <span asp-validation-for="NumeroSerie" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Etat"></label>
+        <input asp-for="Etat" class="form-control" value="Disponible" />
+        <span asp-validation-for="Etat" class="text-danger"></span>
+    </div>
+
+
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <!-- Champs spécifiques PC -->
+    <div class="type-specific" id="pcFields" style="display:none;">
+        <h4>Caractéristiques PC</h4>
+        <div class="form-group">
+            <label asp-for="OS"></label>
+            <input asp-for="OS" class="form-control" />
+            <span asp-validation-for="OS" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="RAM"></label>
+            <input asp-for="RAM" class="form-control" />
+            <span asp-validation-for="RAM" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="CPU"></label>
+            <input asp-for="CPU" class="form-control" />
+            <span asp-validation-for="CPU" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Stockage"></label>
+            <input asp-for="Stockage" class="form-control" />
+            <span asp-validation-for="Stockage" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="ApplicationsInstallees"></label>
+            <input asp-for="ApplicationsInstallees" class="form-control" />
+            <span asp-validation-for="ApplicationsInstallees" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="AdresseMAC"></label>
+            <input asp-for="AdresseMAC" class="form-control" />
+            <span asp-validation-for="AdresseMAC" class="text-danger"></span>
+        </div>
+    </div>
+
+    <!-- Champs spécifiques Imprimante -->
+    <div class="type-specific" id="imprimanteFields" style="display:none;">
+        <h4>Caractéristiques Imprimante</h4>
+        <div class="form-group">
+            <label asp-for="TypeImpression"></label>
+            <input asp-for="TypeImpression" class="form-control" />
+            <span asp-validation-for="TypeImpression" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="VitesseImpression"></label>
+            <input asp-for="VitesseImpression" class="form-control" />
+            <span asp-validation-for="VitesseImpression" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Resolution"></label>
+            <input asp-for="Resolution" class="form-control" />
+            <span asp-validation-for="Resolution" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Connectivite"></label>
+            <input asp-for="Connectivite" class="form-control" />
+            <span asp-validation-for="Connectivite" class="text-danger"></span>
+        </div>
+        <div class="form-group form-check">
+            <input asp-for="Couleur" class="form-check-input" type="checkbox" />
+            <label asp-for="Couleur" class="form-check-label"></label>
+            <span asp-validation-for="Couleur" class="text-danger"></span>
+        </div>
+    </div>
+
+    <!-- Champs spécifiques Serveur -->
+    <div class="type-specific" id="serveurFields" style="display:none;">
+        <h4>Caractéristiques Serveur</h4>
+        <div class="form-group">
+            <label asp-for="NombreDeSlotsRAM"></label>
+            <input asp-for="NombreDeSlotsRAM" type="number" class="form-control" />
+            <span asp-validation-for="NombreDeSlotsRAM" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="TypeRAID"></label>
+            <input asp-for="TypeRAID" class="form-control" />
+            <span asp-validation-for="TypeRAID" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="AdresseIP"></label>
+            <input asp-for="AdresseIP" class="form-control" />
+            <span asp-validation-for="AdresseIP" class="text-danger"></span>
+        </div>
+    </div>
+
+    <!-- Champs spécifiques Scanner -->
+    <div class="type-specific" id="scannerFields" style="display:none;">
+        <h4>Caractéristiques Scanner</h4>
+        <div class="form-group">
+            <label asp-for="TypeScanner"></label>
+            <input asp-for="TypeScanner" class="form-control" />
+            <span asp-validation-for="TypeScanner" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="VitesseScan"></label>
+            <input asp-for="VitesseScan" class="form-control" />
+            <span asp-validation-for="VitesseScan" class="text-danger"></span>
+        </div>
+    </div>
+
+    <!-- Champs spécifiques Écran -->
+    <div class="type-specific" id="ecranFields" style="display:none;">
+        <h4>Caractéristiques Écran</h4>
+        <div class="form-group">
+            <label asp-for="Taille"></label>
+            <input asp-for="Taille" class="form-control" />
+            <span asp-validation-for="Taille" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="TypeEcran"></label>
+            <input asp-for="TypeEcran" class="form-control" />
+            <span asp-validation-for="TypeEcran" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="TempsDeReponse"></label>
+            <input asp-for="TempsDeReponse" class="form-control" />
+            <span asp-validation-for="TempsDeReponse" class="text-danger"></span>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Créer</button>
+    <a asp-action="Index" class="btn btn-secondary mt-3">Annuler</a>
+</form>
+
+@section Scripts {
+    <script>
+        function toggleTypeFields() {
+            const type = document.getElementById("typeMaterielSelect").value;
+            document.querySelectorAll(".type-specific").forEach(div => div.style.display = "none");
+
+            if (type === "PC") {
+                document.getElementById("pcFields").style.display = "block";
+            } else if (type === "Imprimante") {
+                document.getElementById("imprimanteFields").style.display = "block";
+            } else if (type === "Serveur") {
+                document.getElementById("serveurFields").style.display = "block";
+            } else if (type === "Scanner") {
+                document.getElementById("scannerFields").style.display = "block";
+            } else if (type === "Écran") {
+                document.getElementById("ecranFields").style.display = "block";
+            }
+        }
+
+        var selectElem = document.getElementById("typeMaterielSelect");
+        if (selectElem) {
+            selectElem.addEventListener("change", toggleTypeFields);
+        }
+
+        window.onload = function () {
+            toggleTypeFields();
+        };
+    </script>
+
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f2f4f8;
+        color: #333;
+    }
+
+    h2 {
+        color: #2c3e50;
+        font-weight: 700;
+        margin-bottom: 35px;
+        text-align: center;
+        letter-spacing: 0.5px;
+    }
+
+    form {
+        background-color: #ffffff;
+        padding: 35px 40px;
+        border-radius: 15px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+        max-width: 900px;
+        margin: 30px auto 60px auto;
+        transition: all 0.3s ease;
+    }
+
+    form:hover {
+        box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        font-weight: 500;
+        color: #34495e;
+        display: block;
+        margin-bottom: 6px;
+        font-size: 14.5px;
+    }
+
+    .form-control {
+        border-radius: 10px;
+        border: 1px solid #ced4da;
+        padding: 11px 14px;
+        font-size: 14.5px;
+        transition: all 0.3s ease;
+        background-color: #fefefe;
+    }
+
+    .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 8px rgba(0,123,255,0.2);
+        outline: none;
+    }
+
+    select.form-control {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 140 140' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='0,0 140,0 70,70' fill='%236c757d'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 12px;
+    }
+
+    textarea.form-control {
+        resize: vertical;
+    }
+
+    .form-check-input {
+        margin-top: 0.3rem;
+    }
+
+    h4 {
+        margin-top: 30px;
+        margin-bottom: 18px;
+        color: #007bff;
+        font-weight: 600;
+        border-bottom: 2px solid #007bff;
+        display: inline-block;
+        padding-bottom: 5px;
+        letter-spacing: 0.5px;
+    }
+
+    .btn {
+        border-radius: 10px;
+        padding: 12px 25px;
+        font-size: 15px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border: none;
+        color: #fff;
+    }
+
+    .btn-primary:hover {
+        background-color: #0062cc;
+        box-shadow: 0 6px 16px rgba(0,123,255,0.2);
+    }
+
+    .btn-secondary {
+        background-color: #f8f9fa;
+        border: 1px solid #ced4da;
+        color: #495057;
+    }
+
+    .btn-secondary:hover {
+        background-color: #e2e6ea;
+        border-color: #adb5bd;
+    }
+
+    .text-danger {
+        font-size: 0.875rem;
+        margin-top: 3px;
+        display: block;
+    }
+
+    .type-specific {
+        padding: 20px 0;
+        margin-top: 20px;
+        border-top: 1px solid #e1e4e8;
+        transition: all 0.3s ease;
+        border-radius: 10px;
+    }
+
+        #typeMaterielSelect {
+            font-size: 18px; /* texte plus grand */
+            padding: 16px 20px; /* padding généreux pour plus de confort */
+            border-radius: 12px; /* coins arrondis */
+            border: 1.5px solid #007bff; /* bord bleu accentué */
+            background-color: #fefefe; /* fond clair */
+            color: #2c3e50; /* texte sombre */
+            width: 100%; /* occupe toute la largeur du formulaire */
+            height: 55px; /* hauteur confortable */
+            transition: all 0.3s ease;
+            box-sizing: border-box; /* inclut le padding dans la largeur */
+        }
+
+            #typeMaterielSelect:hover {
+                border-color: #0056b3;
+            }
+
+            #typeMaterielSelect:focus {
+                border-color: #0056b3;
+                box-shadow: 0 0 8px rgba(0, 123, 255, 0.25);
+                outline: none;
+            }
+
+
+    /* Smooth fade-in for type-specific fields */
+    .type-specific[style*="display: block"] {
+        animation: fadeIn 0.4s ease-in-out;
+    }
+
+    keyframes fadeIn {
+        0% { opacity: 0; transform: translateY(-10px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive adjustments */
+    media (max-width: 576px) {
+        form {
+            padding: 25px 20px;
+        }
+        .form-row {
+            display: block;
+        }
+        .form-row .form-group {
+            width: 100%;
+        }
+    }
+</style>
+}
+
+
+}

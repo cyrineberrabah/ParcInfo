@@ -1,0 +1,10 @@
+﻿@model IEnumerable<parc_App.Models.Materiel>
+
+<h1>Test View</h1>
+
+<ul>
+    @foreach (var item in Model)
+    {
+        <li>@item.TypeMateriel - @item.Marque</li>
+    }
+</ul>

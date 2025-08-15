@@ -1,0 +1,96 @@
+﻿@model parc_App.Models.Materiel
+
+<h2>Détails du matériel</h2>
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">Type</dt>
+        <dd class="col-sm-10">@Model.TypeMateriel</dd>
+
+        <dt class="col-sm-2">Marque</dt>
+        <dd class="col-sm-10">@Model.Marque</dd>
+
+        <dt class="col-sm-2">Modèle</dt>
+        <dd class="col-sm-10">@Model.Modele</dd>
+
+        <dt class="col-sm-2">Numéro Série</dt>
+        <dd class="col-sm-10">@Model.NumeroSerie</dd>
+
+        <dt class="col-sm-2">État</dt>
+        <dd class="col-sm-10">@Model.Etat</dd>
+
+        <dt class="col-sm-2">Description</dt>
+        <dd class="col-sm-10">@Model.Description</dd>
+
+        @if (Model.TypeMateriel == "PC")
+        {
+            <dt class="col-sm-2">OS</dt>
+            <dd class="col-sm-10">@Model.OS</dd>
+
+            <dt class="col-sm-2">RAM</dt>
+            <dd class="col-sm-10">@Model.RAM</dd>
+
+            <dt class="col-sm-2">CPU</dt>
+            <dd class="col-sm-10">@Model.CPU</dd>
+
+            <dt class="col-sm-2">Stockage</dt>
+            <dd class="col-sm-10">@Model.Stockage</dd>
+
+            <dt class="col-sm-2">Applications Installées</dt>
+            <dd class="col-sm-10">@Model.ApplicationsInstallees</dd>
+
+            <dt class="col-sm-2">Adresse MAC</dt>
+            <dd class="col-sm-10">@Model.AdresseMAC</dd>
+        }
+        else if (Model.TypeMateriel == "Imprimante")
+        {
+            <dt class="col-sm-2">Type Impression</dt>
+            <dd class="col-sm-10">@Model.TypeImpression</dd>
+
+            <dt class="col-sm-2">Vitesse Impression</dt>
+            <dd class="col-sm-10">@Model.VitesseImpression</dd>
+
+            <dt class="col-sm-2">Résolution</dt>
+            <dd class="col-sm-10">@Model.Resolution</dd>
+
+            <dt class="col-sm-2">Connectivité</dt>
+            <dd class="col-sm-10">@Model.Connectivite</dd>
+
+            <dt class="col-sm-2">Couleur</dt>
+            <dd class="col-sm-10">@((Model.Couleur == true) ? "Oui" : "Non")</dd>
+        }
+        else if (Model.TypeMateriel == "Serveur")
+        {
+            <dt class="col-sm-2">Nombre de Slots RAM</dt>
+            <dd class="col-sm-10">@Model.NombreDeSlotsRAM</dd>
+
+            <dt class="col-sm-2">Type RAID</dt>
+            <dd class="col-sm-10">@Model.TypeRAID</dd>
+
+            <dt class="col-sm-2">Adresse IP</dt>
+            <dd class="col-sm-10">@Model.AdresseIP</dd>
+        }
+        else if (Model.TypeMateriel == "Scanner")
+        {
+            <dt class="col-sm-2">Type Scanner</dt>
+            <dd class="col-sm-10">@Model.TypeScanner</dd>
+
+            <dt class="col-sm-2">Vitesse Scan</dt>
+            <dd class="col-sm-10">@Model.VitesseScan</dd>
+        }
+        else if (Model.TypeMateriel == "Écran")
+        {
+            <dt class="col-sm-2">Taille</dt>
+            <dd class="col-sm-10">@Model.Taille</dd>
+
+            <dt class="col-sm-2">Type Écran</dt>
+            <dd class="col-sm-10">@Model.TypeEcran</dd>
+
+            <dt class="col-sm-2">Temps de Réponse</dt>
+            <dd class="col-sm-10">@Model.TempsDeReponse</dd>
+        }
+    </dl>
+</div>
+
+<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Modifier</a>
+<a asp-action="Index" class="btn btn-secondary">Retour</a>

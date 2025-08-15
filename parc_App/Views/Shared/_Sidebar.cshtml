@@ -1,0 +1,79 @@
+﻿@* _Sidebar.cshtml *@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<div id="mySidenav" class="sidenav">
+    <a class="closebtn" onclick="closeNav()">&times;</a>
+    <a asp-controller="Admin" asp-action="About">About</a>
+    <a class="nav-link text-white" asp-controller="Materiel" asp-action="Index">Materiel</a>
+    <a class="nav-link text-white" asp-controller="Preneurs" asp-action="Index">Preneurs</a>
+    <a class="nav-link text-white" asp-controller="Affectation" asp-action="Index">Affecter</a>
+
+
+    <div class="logout-container mt-auto px-4 pb-4">
+        <form asp-controller="Login" asp-action="Logout" method="post" class="d-inline w-100">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-outline-light w-100 text-start">
+                <i class="fas fa-sign-out-alt me-2"></i> Déconnexion
+            </button>
+        </form>
+    </div>
+</div>
+
+<style>
+    .sidenav {
+        height: 100%;
+        width: 0;
+        position: fixed;
+        z-index: 1050;
+        top: 0;
+        left: 0;
+        background-color: #0d5586;
+        overflow-x: hidden;
+        padding-top: 60px;
+        transition: 0.5s;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+        .sidenav a {
+            padding: 8px 8px 8px 32px;
+            text-decoration: none;
+            font-size: 25px;
+            color: #818181;
+            display: block;
+            transition: 0.3s;
+        }
+
+            .sidenav a:hover {
+                color: #f1f1f1;
+            }
+
+        .sidenav .closebtn {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 36px;
+            margin-left: 50px;
+            cursor: pointer;
+            color: #fff;
+        }
+
+    .logout-container form button {
+        font-size: 18px;
+        background-color: transparent;
+        border: none;
+        color: #f1f1f1;
+        text-align: left;
+        padding: 10px 0;
+        transition: color 0.3s;
+    }
+
+        .logout-container form button:hover {
+            color: #ff4b5c;
+        }
+
+    .logout-container i {
+        margin-right: 8px;
+    }
+</style>

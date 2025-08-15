@@ -1,0 +1,107 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - Auth</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="~/css/styles.css" />
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background-color: #0d5586;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .auth-container {
+            background-color: white;
+            width: 400px;
+            max-width: 90%;
+            border-radius: 12px;
+            /* 🌟 Effet 3D */
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.1);
+            transform: perspective(1000px) translateZ(0);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 40px;
+        }
+
+            .auth-container:hover {
+                transform: perspective(1000px) translateZ(10px);
+                box-shadow: 0 25px 40px rgba(0, 0, 0, 0.3), 0 12px 12px rgba(0, 0, 0, 0.2);
+            }
+
+        .auth-logo {
+            width: 100%;
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 25px;
+        }
+
+            .auth-logo img {
+                max-width: 300px;
+                width: 100%;
+                height: auto;
+                display: inline-block;
+            }
+
+        .auth-form {
+            width: 100%;
+        }
+
+            .auth-form input[type="text"],
+            .auth-form input[type="email"],
+            .auth-form input[type="password"],
+            .auth-form button {
+                width: 100%;
+                padding: 12px 15px;
+                margin: 10px 0;
+                border-radius: 8px;
+                border: 1px solid #ccc;
+                font-size: 16px;
+                box-sizing: border-box;
+            }
+
+            .auth-form button {
+                background-color: #5784BA;
+                color: white;
+                border: none;
+                cursor: pointer;
+                font-weight: 600;
+                padding: 12px 15px;
+                border-radius: 8px;
+                box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15); /* Ombre douce */
+                transition: all 0.2s ease;
+            }
+
+                .auth-form button:hover {
+                    background-color: #4169a8;
+                    transform: translateY(-1px); /* Léger soulèvement */
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Légèrement plus profond */
+                }
+
+                .auth-form button:active {
+                    transform: translateY(0);
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Effet appuyé */
+                }
+
+
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-logo">
+            <img src="~/assets/img/tib002.jpg" alt="Logo" />
+        </div>
+        <div class="auth-form">
+            @RenderBody()
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+﻿@model parc_App.Models.Preneur
+@{
+    ViewData["Title"] = "Supprimer un preneur";
+}
+
+<h2>Supprimer un preneur</h2>
+
+<div class="alert alert-warning">
+    <p>Êtes-vous sûr de vouloir supprimer ce preneur ?</p>
+</div>
+
+<dl class="row">
+    <dt class="col-sm-2">Nom</dt>
+    <dd class="col-sm-10">@Model.Nom</dd>
+
+    <dt class="col-sm-2">Prénom</dt>
+    <dd class="col-sm-10">@Model.Prenom</dd>
+
+    <dt class="col-sm-2">Email</dt>
+    <dd class="col-sm-10">@Model.Email</dd>
+
+    <dt class="col-sm-2">Téléphone</dt>
+    <dd class="col-sm-10">@Model.Telephone</dd>
+
+    <dt class="col-sm-2">Département</dt>
+    <dd class="col-sm-10">@Model.Departement</dd>
+</dl>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Oui, supprimer</button>
+    <a asp-action="Index" class="btn btn-secondary">Annuler</a>
+</form>

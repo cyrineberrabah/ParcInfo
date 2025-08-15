@@ -1,0 +1,91 @@
+﻿@model List<parc_App.ViewModel.MaterielAffectationViewModel>
+@{
+    ViewData["Title"] = "Liste des matériels";
+}
+
+<div class="container-xl">
+    <div class="table-responsive">
+        <div class="table-wrapper">
+            <div class="table-title">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h2>Liste <b>des affectations</b></h2>
+                    </div>
+                </div>
+            </div>
+
+            <table class="table table-striped table-hover table-bordered">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Marque</th>
+                        <th>Modèle</th>
+                        <th>État</th>
+                        <th>Preneur</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var materiel in Model)
+                    {
+                        <tr>
+                            <td>@materiel.TypeMateriel</td>
+                            <td>@materiel.Marque</td>
+                            <td>@materiel.Modele</td>
+                            <td>
+                                @if (materiel.Etat == "Amorti")
+                                {
+                                    <span class="text-danger">@materiel.Etat</span>
+                                }
+                                else
+                                {
+                                    @materiel.Etat
+                                }
+                            </td>
+                            <td>@(string.IsNullOrEmpty(materiel.PreneurNomComplet) ? "Non attribué" : materiel.PreneurNomComplet)</td>
+                            <td>
+                                <a asp-action="Affecter"
+                                   asp-route-id="@materiel.MaterielId"
+                                   class="btn btn-primary btn-sm @(materiel.Etat == "Amorti" ? "disabled" : "")">
+                                    Affecter
+                                </a>
+                                <a asp-action="Historique"
+                                   asp-route-id="@materiel.MaterielId"
+                                   class="btn btn-info btn-sm">
+                                    Historique
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <!-- Pagination -->
+            <nav aria-label="Pagination">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
+                        <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage - 1 })">Précédent</a>
+                    </li>
+
+                    @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                            <a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
+                        </li>
+                    }
+
+                    <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
+                        <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage + 1 })">Suivant</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger mt-2">
+        @TempData["Error"]
+    </div>
+}

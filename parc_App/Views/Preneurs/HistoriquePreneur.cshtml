@@ -1,0 +1,31 @@
+﻿@model IEnumerable< parc_App.Models.HistoriqueAffectation>
+
+@{
+    ViewData["Title"] = "Historique du preneur";
+}
+
+<h2>Historique de @ViewBag.PreneurNom</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Type</th>
+            <th>Marque</th>
+            <th>Modèle</th>
+            <th>Date Affectation</th>
+            <th>Date Retour</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Materiel.TypeMateriel</td>
+                <td>@item.Materiel.Marque</td>
+                <td>@item.Materiel.Modele</td>
+                <td>@item.DateAffectation.ToString("dd/MM/yyyy")</td>
+                <td>@(item.DateRetour?.ToString("dd/MM/yyyy") ?? "En cours")</td>
+            </tr>
+        }
+    </tbody>
+</table>
