@@ -1,0 +1,314 @@
+﻿@model IEnumerable<parc_App.Models.Departement>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round" />
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+
+<style>
+    body {
+        color: #566787;
+        background: #f5f5f5;
+        font-family: 'Varela Round',sans-serif;
+        font-size: 13px;
+    }
+
+    .table-responsive {
+        margin: 30px 0;
+        overflow-x: auto;
+    }
+
+    .table-wrapper {
+        background: #fff;
+        padding: 20px 25px;
+        border-radius: 3px;
+        box-shadow: 0 1px 1px rgba(0,0,0,0.05);
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .table-title {
+        padding-bottom: 15px;
+        background: #435d7d;
+        color: #fff;
+        padding: 16px 30px;
+        margin: -20px -25px 10px;
+        border-radius: 3px 3px 0 0;
+    }
+
+        .table-title h2 {
+            margin: 5px 0 0;
+            font-size: 24px;
+        }
+
+        .table-title .btn {
+            color: #fff;
+            float: right;
+            font-size: 13px;
+            background: #19b5fe;
+            border: none;
+            min-width: 50px;
+            border-radius: 2px;
+            outline: none !important;
+            margin-left: 10px;
+        }
+
+    .table td i {
+        font-size: 19px;
+    }
+
+    .table td a {
+        color: #566787;
+        text-decoration: none;
+    }
+
+        .table td a.edit {
+            color: #FFC107;
+        }
+
+        .table td a.delete {
+            color: #F44336;
+        }
+
+        .table td a:hover {
+            color: #2196F3;
+        }
+</style>
+
+<div class="container-fluid">
+    <div class="table-responsive">
+        <div class="table-wrapper">
+            <div class="table-title row mb-3">
+                <div class="col-sm-6"><h2>Gérer <b>les Départements</b></h2></div>
+                <div class="col-sm-6 text-right">
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addDepartementModal">
+                            <i class="material-icons">&#xE147;</i> Ajouter
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Nom</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="departementsTable">
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var dept in Model)
+                        {
+                            <tr data-id="@dept.Id">
+                                <td>@dept.Id</td>
+                                <td class="departement-nom">@dept.Nom</td>
+                                <td>
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <a href="#" class="edit-btn" data-id="@dept.Id" data-nom="@dept.Nom" title="Modifier">
+                                            <i class="material-icons">&#xE254;</i>
+                                        </a>
+                                        <a href="#" class="delete-btn" data-id="@dept.Id" title="Supprimer">
+                                            <i class="material-icons">&#xE872;</i>
+                                        </a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="3" class="text-center">Aucun département trouvé.</td></tr>
+                    }
+                </tbody>
+            </table>
+
+            <!-- Pagination -->
+            <nav>
+                <ul class="pagination justify-content-center">
+                    <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
+                        <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage - 1 })">Précédent</a>
+                    </li>
+                    @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                    {
+                        <li class="page-item @(ViewBag.CurrentPage == i ? "active" : "")">
+                            <a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
+                        </li>
+                    }
+                    <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
+                        <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage + 1 })">Suivant</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Ajouter -->
+<div class="modal fade" id="addDepartementModal" tabindex="-1" aria-labelledby="addDepartementModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content shadow-lg rounded-4">
+            <form id="addDepartementForm">
+                @Html.AntiForgeryToken()
+                <div class="modal-header bg-primary text-white rounded-top-4">
+                    <h5 class="modal-title" id="addDepartementModalLabel">Ajouter un département</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body p-4 bg-light">
+                    <div class="mb-3">
+                        <label for="NomDepartement" class="form-label">Nom du département</label>
+                        <input type="text" class="form-control form-control-lg" id="NomDepartement" name="Nom" placeholder="Ex: Informatique" required />
+                        <span class="text-danger" id="errorDepartement"></span>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light border-0">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Ajouter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Modifier -->
+<div class="modal fade" id="editDepartementModal" tabindex="-1" aria-labelledby="editDepartementModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content shadow-lg rounded-4">
+            <form id="editDepartementForm">
+                @Html.AntiForgeryToken()
+                <div class="modal-header bg-warning text-dark rounded-top-4">
+                    <h5 class="modal-title" id="editDepartementModalLabel">Modifier un département</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body p-4 bg-light">
+                    <input type="hidden" id="EditDepartementId" name="Id" />
+                    <div class="mb-3">
+                        <label for="EditNomDepartement" class="form-label">Nom du département</label>
+                        <input type="text" class="form-control form-control-lg" id="EditNomDepartement" name="Nom" required />
+                        <span class="text-danger" id="errorEditDepartement"></span>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light border-0">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-warning btn-sm">Modifier</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Supprimer -->
+<div class="modal fade" id="deleteDepartementModal" tabindex="-1" aria-labelledby="deleteDepartementModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-lg rounded-4">
+            <form id="deleteDepartementForm">
+                @Html.AntiForgeryToken()
+                <div class="modal-header bg-danger text-white rounded-top-4">
+                    <h5 class="modal-title" id="deleteDepartementModalLabel">Supprimer un département</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body p-4 bg-light">
+                    <input type="hidden" id="DeleteDepartementId" name="Id" />
+                    <p>Voulez-vous vraiment supprimer ce département ?</p>
+                    <span class="text-danger" id="errorDeleteDepartement"></span>
+                </div>
+                <div class="modal-footer bg-light border-0">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const tbody = document.getElementById('departementsTable');
+
+        function attachActionButtons() {
+            document.querySelectorAll('.edit-btn').forEach(btn=>{
+                btn.onclick = function(){
+                    document.getElementById('EditDepartementId').value = this.dataset.id;
+                    document.getElementById('EditNomDepartement').value = this.dataset.nom;
+                    new bootstrap.Modal(document.getElementById('editDepartementModal')).show();
+                }
+            });
+
+            document.querySelectorAll('.delete-btn').forEach(btn=>{
+                btn.onclick = function(){
+                    document.getElementById('DeleteDepartementId').value = this.dataset.id;
+                    new bootstrap.Modal(document.getElementById('deleteDepartementModal')).show();
+                }
+            });
+        }
+        attachActionButtons();
+
+        // Ajouter
+        document.getElementById('addDepartementForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const nomInput = document.getElementById('NomDepartement');
+            const errorEl = document.getElementById('errorDepartement');
+            const nom = nomInput.value.trim();
+            const regex = /^[A-Z][a-zA-Z]*$/;
+            if (!regex.test(nom)) { errorEl.innerText = "Le nom doit commencer par une majuscule et ne contenir que des lettres."; return; }
+            errorEl.innerText = "";
+
+            fetch('@Url.Action("CreateModal", "Departements")', { method:'POST', body: new FormData(this) })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success){
+                    const row = tbody.insertRow();
+                    row.dataset.id = data.id;
+                    row.innerHTML = `<td>${data.id}</td><td class="departement-nom">${data.nom}</td><td>
+                        <a href="#" class="edit-btn" data-id="${data.id}" data-nom="${data.nom}" title="Modifier"><i class="material-icons">&#xE254;</i></a>
+                        <a href="#" class="delete-btn" data-id="${data.id}" title="Supprimer"><i class="material-icons">&#xE872;</i></a></td>`;
+                    bootstrap.Modal.getInstance(document.getElementById('addDepartementModal')).hide();
+                    document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+                    document.body.classList.remove('modal-open'); document.body.style='';
+                    this.reset();
+                    attachActionButtons();
+                } else { errorEl.innerText = data.error || "Erreur lors de l'ajout."; }
+            }).catch(err => console.error(err));
+        });
+
+        // Modifier
+        document.getElementById('editDepartementForm').addEventListener('submit', function(e){
+            e.preventDefault();
+            const nomInput = document.getElementById('EditNomDepartement');
+            const errorEl = document.getElementById('errorEditDepartement');
+            const nom = nomInput.value.trim();
+            const regex = /^[A-Z][a-zA-Z]*$/;
+            if(!regex.test(nom)) { errorEl.innerText = "Le nom doit commencer par une majuscule et ne contenir que des lettres."; return; }
+            errorEl.innerText = "";
+
+            fetch('@Url.Action("EditModal", "Departements")', { method:'POST', body: new FormData(this) })
+            .then(res=>res.json())
+            .then(data=>{
+                if(data.success){
+                    const row = tbody.querySelector(`tr[data-id='${data.id}']`);
+                    row.querySelector('.departement-nom').innerText = data.nom;
+                    bootstrap.Modal.getInstance(document.getElementById('editDepartementModal')).hide();
+                } else { errorEl.innerText = data.error || "Erreur lors de la modification."; }
+            }).catch(err => console.error(err));
+        });
+
+        // Supprimer
+        document.getElementById('deleteDepartementForm').addEventListener('submit', function(e){
+            e.preventDefault();
+            fetch('@Url.Action("DeleteModal", "Departements")',{ method:'POST', body: new FormData(this) })
+            .then(res=>res.json())
+            .then(data=>{
+                if(data.success){
+                    const row = tbody.querySelector(`tr[data-id='${data.id}']`);
+                    row.remove();
+                    bootstrap.Modal.getInstance(document.getElementById('deleteDepartementModal')).hide();
+                } else { document.getElementById('errorDeleteDepartement').innerText = data.error; }
+            });
+        });
+    </script>
+}

@@ -8,11 +8,11 @@
             public string Marque { get; set; }
             public string Modele { get; set; }
             public string NumeroSerie { get; set; }
-            public string Etat { get; set; }
-            public string Description { get; set; }
+            public string? Etat { get; set; }
+             public string? Description { get; set; }
 
-            // PC
-            public string? OS { get; set; }
+        // PC
+        public string? OS { get; set; }
             public string? RAM { get; set; }
             public string? CPU { get; set; }
             public string? Stockage { get; set; }
@@ -40,12 +40,13 @@
             public string? TypeEcran { get; set; }
             public string? TempsDeReponse { get; set; }
 
-      
-    public int? PreneurId { get; set; }
 
-        // Navigation vers Preneur
-        public Preneur Preneur { get; set; }
+        public int? PreneurId { get; set; }
+        public Preneur? Preneur { get; set; }
 
+
+        // Nouvelle propriété nullable
+        public string? Reference { get; set;     }
 
 
         public bool IsDeleted { get; set; } = false;

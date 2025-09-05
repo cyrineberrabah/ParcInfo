@@ -1,185 +1,196 @@
 ﻿@model parc_App.Models.Materiel
 
-<h2>Modifier le matériel</h2>
+<div class="container">
+    <div class="card">
+        <h2>Modifier le matériel</h2>
+        <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="Id" />
 
-<form asp-action="Edit" method="post">
-    <input type="hidden" asp-for="Id" />
+            <div class="form-grid">
+                <!-- Type de matériel (non modifiable) -->
+                <div class="form-group">
+                    <label>Type de Matériel</label>
+                    <input type="text" class="form-control" value="@Model.TypeMateriel" disabled />
+                    <input type="hidden" asp-for="TypeMateriel" />
+                </div>
 
-    <div class="form-group">
-        <label asp-for="TypeMateriel"></label>
-        <select asp-for="TypeMateriel" class="form-control" id="typeMaterielSelect">
-            <option value="">-- Sélectionner --</option>
-            <option>PC</option>
-            <option>Imprimante</option>
-            <option>Serveur</option>
-            <option>Scanner</option>
-            <option>Écran</option>
-        </select>
-        <span asp-validation-for="TypeMateriel" class="text-danger"></span>
-    </div>
+                <!-- Marque -->
+                <div class="form-group">
+                    <label asp-for="Marque"></label>
+                    <input asp-for="Marque" class="form-control" required maxlength="50" />
+                    <span asp-validation-for="Marque" class="text-danger"></span>
+                </div>
 
-    <div class="form-group">
-        <label asp-for="Marque"></label>
-        <input asp-for="Marque" class="form-control" />
-    </div>
+                <!-- Modèle -->
+                <div class="form-group">
+                    <label asp-for="Modele"></label>
+                    <input asp-for="Modele" class="form-control" required maxlength="50" />
+                    <span asp-validation-for="Modele" class="text-danger"></span>
+                </div>
 
-    <div class="form-group">
-        <label asp-for="Modele"></label>
-        <input asp-for="Modele" class="form-control" />
-    </div>
+                <!-- Numéro de série -->
+                <div class="form-group">
+                    <label asp-for="NumeroSerie"></label>
+                    <input asp-for="NumeroSerie" class="form-control" required maxlength="50" />
+                    <span asp-validation-for="NumeroSerie" class="text-danger"></span>
+                </div>
 
-    <div class="form-group">
-        <label asp-for="NumeroSerie"></label>
-        <input asp-for="NumeroSerie" class="form-control" />
-    </div>
+                <!-- État (non modifiable) -->
+                <div class="form-group">
+                    <label>État</label>
+                    <input type="text" class="form-control" value="@Model.Etat" disabled />
+                    <input type="hidden" asp-for="Etat" />
+                </div>
 
-    <div class="form-group">
-        <label asp-for="Etat"></label>
-        <input asp-for="Etat" class="form-control" />
-    </div>
+                <!-- Description -->
+                <div class="form-group">
+                    <label asp-for="Description"></label>
+                    <textarea asp-for="Description" class="form-control"  maxlength="500"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+            </div>
 
-    <div class="form-group">
-        <label asp-for="Description"></label>
-        <textarea asp-for="Description" class="form-control"></textarea>
-    </div>
-
-    <!-- Champs pour PC -->
-    <div id="pcFields" class="type-specific" style="display:none;">
-        <div class="form-group">
-            <label asp-for="OS"></label>
-            <input asp-for="OS" class="form-control" />
-        </div>
-        <div class="form-group">
-            <label asp-for="RAM"></label>
-            <input asp-for="RAM" class="form-control" />
-        </div>
-        <div class="form-group">
-            <label asp-for="CPU"></label>
-            <input asp-for="CPU" class="form-control" />
-        </div>
-        <div class="form-group">
-            <label asp-for="Stockage"></label>
-            <input asp-for="Stockage" class="form-control" />
-        </div>
-        <div class="form-group">
-            <label asp-for="ApplicationsInstallees"></label>
-            <input asp-for="ApplicationsInstallees" class="form-control" />
-        </div>
-        <div class="form-group">
-            <label asp-for="AdresseMAC"></label>
-            <input asp-for="AdresseMAC" class="form-control" />
-        </div>
-    </div>
-
-    <!-- Champs pour Imprimante -->
-    <div id="imprimanteFields" class="type-specific" style="display:none;">
-        <div class="form-group">
-            <label asp-for="TypeImpression"></label>
-            <input asp-for="TypeImpression" class="form-control" />
-        </div>
-        <div class="form-group">
-            <label asp-for="VitesseImpression"></label>
-            <input asp-for="VitesseImpression" class="form-control" />
-        </div>
-        <div class="form-group">
-            <label asp-for="Resolution"></label>
-            <input asp-for="Resolution" class="form-control" />
-        </div>
-        <div class="form-group">
-            <label asp-for="Connectivite"></label>
-            <input asp-for="Connectivite" class="form-control" />
-        </div>
-        <div class="form-group form-check">
-            <input type="checkbox"
-                   name="Couleur"
-                   value="true"
-                   @(Model.Couleur == true ? "checked" : "")
-                   class="form-check-input" />
-            <input type="hidden" name="Couleur" value="false" />
-            <label for="Couleur" class="form-check-label">Couleur</label>
-            <span asp-validation-for="Couleur" class="text-danger"></span>
-        </div>
-    </div>
-
-    <!-- Champs pour Serveur -->
-    <div id="serveurFields" class="type-specific" style="display:none;">
-        <div class="form-group">
-            <label asp-for="NombreDeSlotsRAM"></label>
-            <input asp-for="NombreDeSlotsRAM" class="form-control" />
-        </div>
-        <div class="form-group">
-            <label asp-for="TypeRAID"></label>
-            <input asp-for="TypeRAID" class="form-control" />
-        </div>
-        <div class="form-group">
-            <label asp-for="AdresseIP"></label>
-            <input asp-for="AdresseIP" class="form-control" />
-        </div>
-    </div>
-
-    <!-- Champs pour Scanner -->
-    <div id="scannerFields" class="type-specific" style="display:none;">
-        <div class="form-group">
-            <label asp-for="TypeScanner"></label>
-            <input asp-for="TypeScanner" class="form-control" />
-        </div>
-        <div class="form-group">
-            <label asp-for="VitesseScan"></label>
-            <input asp-for="VitesseScan" class="form-control" />
-        </div>
-    </div>
-
-    <!-- Champs pour Écran -->
-    <div id="ecranFields" class="type-specific" style="display:none;">
-        <div class="form-group">
-            <label asp-for="Taille"></label>
-            <input asp-for="Taille" class="form-control" />
-        </div>
-        <div class="form-group">
-            <label asp-for="TypeEcran"></label>
-            <input asp-for="TypeEcran" class="form-control" />
-        </div>
-        <div class="form-group">
-            <label asp-for="TempsDeReponse"></label>
-            <input asp-for="TempsDeReponse" class="form-control" />
-        </div>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Enregistrer</button>
-    <a asp-action="Index" class="btn btn-secondary">Annuler</a>
-</form>
-
-@section Scripts {
-    <script>
-        function toggleTypeFields() {
-            const type = document.getElementById("typeMaterielSelect").value;
-
-            // Cacher tous les blocs spécifiques
-            document.querySelectorAll(".type-specific").forEach(div => div.style.display = "none");
-
-            // Afficher uniquement celui correspondant
-            if (type === "PC") {
-                document.getElementById("pcFields").style.display = "block";
-            } else if (type === "Imprimante") {
-                document.getElementById("imprimanteFields").style.display = "block";
-            } else if (type === "Serveur") {
-                document.getElementById("serveurFields").style.display = "block";
-            } else if (type === "Scanner") {
-                document.getElementById("scannerFields").style.display = "block";
-            } else if (type === "Écran") {
-                document.getElementById("ecranFields").style.display = "block";
+            <!-- Sections spécifiques -->
+            @if (Model.TypeMateriel == "PC")
+            {
+                <div class="type-specific visible">
+                    <h4>Caractéristiques PC</h4>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label asp-for="OS"></label>
+                            <input asp-for="OS" class="form-control" />
+                            <input type="hidden" asp-for="OS" />
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="RAM"></label>
+                            <input asp-for="RAM" class="form-control" />
+                            <input type="hidden" asp-for="RAM" />
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="CPU"></label>
+                            <input asp-for="CPU" class="form-control" />
+                            <input type="hidden" asp-for="CPU" />
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Stockage"></label>
+                            <input asp-for="Stockage" class="form-control" />
+                            <input type="hidden" asp-for="Stockage" />
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="ApplicationsInstallees"></label>
+                            <input asp-for="ApplicationsInstallees" class="form-control" />
+                            <input type="hidden" asp-for="ApplicationsInstallees" />
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="AdresseMAC"></label>
+                            <input asp-for="AdresseMAC" class="form-control" />
+                            <input type="hidden" asp-for="AdresseMAC" />
+                        </div>
+                    </div>
+                </div>
             }
-        }
+            else if (Model.TypeMateriel == "Imprimante")
+            {
+                <div class="type-specific visible">
+                    <h4>Caractéristiques Imprimante</h4>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label asp-for="TypeImpression"></label>
+                            <input asp-for="TypeImpression" class="form-control" />
+                            <input type="hidden" asp-for="TypeImpression" />
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="VitesseImpression"></label>
+                            <input asp-for="VitesseImpression" class="form-control" type="number" />
+                            <input type="hidden" asp-for="VitesseImpression" />
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Resolution"></label>
+                            <input asp-for="Resolution" class="form-control" />
+                            <input type="hidden" asp-for="Resolution" />
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Connectivite"></label>
+                            <input asp-for="Connectivite" class="form-control" />
+                            <input type="hidden" asp-for="Connectivite" />
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" name="Couleur" value="true" @(Model.Couleur ?? false ? "checked" : "") class="form-check-input" />
+                            <input type="hidden" name="Couleur" value="false" />
+                            <label class="form-check-label">Couleur</label>
+                        </div>
+                    </div>
+                </div>
+            }
+            else if (Model.TypeMateriel == "Serveur")
+            {
+                <div class="type-specific visible">
+                    <h4>Caractéristiques Serveur</h4>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label asp-for="NombreDeSlotsRAM"></label>
+                            <input asp-for="NombreDeSlotsRAM" class="form-control" type="number" />
+                            <input type="hidden" asp-for="NombreDeSlotsRAM" />
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="TypeRAID"></label>
+                            <input asp-for="TypeRAID" class="form-control" />
+                            <input type="hidden" asp-for="TypeRAID" />
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="AdresseIP"></label>
+                            <input asp-for="AdresseIP" class="form-control" />
+                            <input type="hidden" asp-for="AdresseIP" />
+                        </div>
+                    </div>
+                </div>
+            }
+            else if (Model.TypeMateriel == "Scanner")
+            {
+                <div class="type-specific visible">
+                    <h4>Caractéristiques Scanner</h4>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label asp-for="TypeScanner"></label>
+                            <input asp-for="TypeScanner" class="form-control" />
+                            <input type="hidden" asp-for="TypeScanner" />
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="VitesseScan"></label>
+                            <input asp-for="VitesseScan" class="form-control" type="number" />
+                            <input type="hidden" asp-for="VitesseScan" />
+                        </div>
+                    </div>
+                </div>
+            }
+            else if (Model.TypeMateriel == "Écran")
+            {
+                <div class="type-specific visible">
+                    <h4>Caractéristiques Écran</h4>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label asp-for="Taille"></label>
+                            <input asp-for="Taille" class="form-control" type="number" />
+                            <input type="hidden" asp-for="Taille" />
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="TypeEcran"></label>
+                            <input asp-for="TypeEcran" class="form-control" />
+                            <input type="hidden" asp-for="TypeEcran" />
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="TempsDeReponse"></label>
+                            <input asp-for="TempsDeReponse" class="form-control" type="number" />
+                            <input type="hidden" asp-for="TempsDeReponse" />
+                        </div>
+                    </div>
+                </div>
+            }
 
-        // Associer l'événement sur le select
-        var selectElem = document.getElementById("typeMaterielSelect");
-        if (selectElem) {
-            selectElem.addEventListener("change", toggleTypeFields);
-        }
-
-        // Appeler au chargement de la page (pour pré-afficher si édition)
-        window.onload = function () {
-            toggleTypeFields();
-        };
-    </script>
-}
+            <div class="button-group">
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                <a asp-action="Index" class="btn btn-secondary">Annuler</a>
+            </div>
+        </form>
+    </div>
+</div>

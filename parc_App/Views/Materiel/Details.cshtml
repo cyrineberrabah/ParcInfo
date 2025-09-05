@@ -1,96 +1,200 @@
 ﻿@model parc_App.Models.Materiel
-
-<h2>Détails du matériel</h2>
-
-<div>
-    <dl class="row">
-        <dt class="col-sm-2">Type</dt>
-        <dd class="col-sm-10">@Model.TypeMateriel</dd>
-
-        <dt class="col-sm-2">Marque</dt>
-        <dd class="col-sm-10">@Model.Marque</dd>
-
-        <dt class="col-sm-2">Modèle</dt>
-        <dd class="col-sm-10">@Model.Modele</dd>
-
-        <dt class="col-sm-2">Numéro Série</dt>
-        <dd class="col-sm-10">@Model.NumeroSerie</dd>
-
-        <dt class="col-sm-2">État</dt>
-        <dd class="col-sm-10">@Model.Etat</dd>
-
-        <dt class="col-sm-2">Description</dt>
-        <dd class="col-sm-10">@Model.Description</dd>
-
-        @if (Model.TypeMateriel == "PC")
-        {
-            <dt class="col-sm-2">OS</dt>
-            <dd class="col-sm-10">@Model.OS</dd>
-
-            <dt class="col-sm-2">RAM</dt>
-            <dd class="col-sm-10">@Model.RAM</dd>
-
-            <dt class="col-sm-2">CPU</dt>
-            <dd class="col-sm-10">@Model.CPU</dd>
-
-            <dt class="col-sm-2">Stockage</dt>
-            <dd class="col-sm-10">@Model.Stockage</dd>
-
-            <dt class="col-sm-2">Applications Installées</dt>
-            <dd class="col-sm-10">@Model.ApplicationsInstallees</dd>
-
-            <dt class="col-sm-2">Adresse MAC</dt>
-            <dd class="col-sm-10">@Model.AdresseMAC</dd>
-        }
-        else if (Model.TypeMateriel == "Imprimante")
-        {
-            <dt class="col-sm-2">Type Impression</dt>
-            <dd class="col-sm-10">@Model.TypeImpression</dd>
-
-            <dt class="col-sm-2">Vitesse Impression</dt>
-            <dd class="col-sm-10">@Model.VitesseImpression</dd>
-
-            <dt class="col-sm-2">Résolution</dt>
-            <dd class="col-sm-10">@Model.Resolution</dd>
-
-            <dt class="col-sm-2">Connectivité</dt>
-            <dd class="col-sm-10">@Model.Connectivite</dd>
-
-            <dt class="col-sm-2">Couleur</dt>
-            <dd class="col-sm-10">@((Model.Couleur == true) ? "Oui" : "Non")</dd>
-        }
-        else if (Model.TypeMateriel == "Serveur")
-        {
-            <dt class="col-sm-2">Nombre de Slots RAM</dt>
-            <dd class="col-sm-10">@Model.NombreDeSlotsRAM</dd>
-
-            <dt class="col-sm-2">Type RAID</dt>
-            <dd class="col-sm-10">@Model.TypeRAID</dd>
-
-            <dt class="col-sm-2">Adresse IP</dt>
-            <dd class="col-sm-10">@Model.AdresseIP</dd>
-        }
-        else if (Model.TypeMateriel == "Scanner")
-        {
-            <dt class="col-sm-2">Type Scanner</dt>
-            <dd class="col-sm-10">@Model.TypeScanner</dd>
-
-            <dt class="col-sm-2">Vitesse Scan</dt>
-            <dd class="col-sm-10">@Model.VitesseScan</dd>
-        }
-        else if (Model.TypeMateriel == "Écran")
-        {
-            <dt class="col-sm-2">Taille</dt>
-            <dd class="col-sm-10">@Model.Taille</dd>
-
-            <dt class="col-sm-2">Type Écran</dt>
-            <dd class="col-sm-10">@Model.TypeEcran</dd>
-
-            <dt class="col-sm-2">Temps de Réponse</dt>
-            <dd class="col-sm-10">@Model.TempsDeReponse</dd>
-        }
-    </dl>
+<div class="container">
+    <div class="card">
+        <h2>Détails du matériel</h2>
+        <div>
+            <dl class="row">
+                <dt class="col-4 col-sm-2">Type</dt>
+                <dd class="col-8 col-sm-10">@Model.TypeMateriel</dd>
+                <dt class="col-4 col-sm-2">Marque</dt>
+                <dd class="col-8 col-sm-10">@Model.Marque</dd>
+                <dt class="col-4 col-sm-2">Modèle</dt>
+                <dd class="col-8 col-sm-10">@Model.Modele</dd>
+                <dt class="col-4 col-sm-2">Numéro Série</dt>
+                <dd class="col-8 col-sm-10">@Model.NumeroSerie</dd>
+                <dt class="col-4 col-sm-2">État</dt>
+                <dd class="col-8 col-sm-10">@Model.Etat</dd>
+                <dt class="col-4 col-sm-2">Description</dt>
+                <dd class="col-8 col-sm-10">@Model.Description</dd>
+                @if (Model.TypeMateriel == "PC")
+                {
+                    <dt class="col-4 col-sm-2">OS</dt>
+                    <dd class="col-8 col-sm-10">@Model.OS</dd>
+                    <dt class="col-4 col-sm-2">RAM</dt>
+                    <dd class="col-8 col-sm-10">@Model.RAM</dd>
+                    <dt class="col-4 col-sm-2">CPU</dt>
+                    <dd class="col-8 col-sm-10">@Model.CPU</dd>
+                    <dt class="col-4 col-sm-2">Stockage</dt>
+                    <dd class="col-8 col-sm-10">@Model.Stockage</dd>
+                    <dt class="col-4 col-sm-2">Applications Installées</dt>
+                    <dd class="col-8 col-sm-10">@Model.ApplicationsInstallees</dd>
+                    <dt class="col-4 col-sm-2">Adresse MAC</dt>
+                    <dd class="col-8 col-sm-10">@Model.AdresseMAC</dd>
+                }
+                else if (Model.TypeMateriel == "Imprimante")
+                {
+                    <dt class="col-4 col-sm-2">Type Impression</dt>
+                    <dd class="col-8 col-sm-10">@Model.TypeImpression</dd>
+                    <dt class="col-4 col-sm-2">Vitesse Impression</dt>
+                    <dd class="col-8 col-sm-10">@Model.VitesseImpression</dd>
+                    <dt class="col-4 col-sm-2">Résolution</dt>
+                    <dd class="col-8 col-sm-10">@Model.Resolution</dd>
+                    <dt class="col-4 col-sm-2">Connectivité</dt>
+                    <dd class="col-8 col-sm-10">@Model.Connectivite</dd>
+                    <dt class="col-4 col-sm-2">Couleur</dt>
+                    <dd class="col-8 col-sm-10">@((Model.Couleur == true) ? "Oui" : "Non")</dd>
+                }
+                else if (Model.TypeMateriel == "Serveur")
+                {
+                    <dt class="col-4 col-sm-2">Nombre de Slots RAM</dt>
+                    <dd class="col-8 col-sm-10">@Model.NombreDeSlotsRAM</dd>
+                    <dt class="col-4 col-sm-2">Type RAID</dt>
+                    <dd class="col-8 col-sm-10">@Model.TypeRAID</dd>
+                    <dt class="col-4 col-sm-2">Adresse IP</dt>
+                    <dd class="col-8 col-sm-10">@Model.AdresseIP</dd>
+                }
+                else if (Model.TypeMateriel == "Scanner")
+                {
+                    <dt class="col-4 col-sm-2">Type Scanner</dt>
+                    <dd class="col-8 col-sm-10">@Model.TypeScanner</dd>
+                    <dt class="col-4 col-sm-2">Vitesse Scan</dt>
+                    <dd class="col-8 col-sm-10">@Model.VitesseScan</dd>
+                }
+                else if (Model.TypeMateriel == "Écran")
+                {
+                    <dt class="col-4 col-sm-2">Taille</dt>
+                    <dd class="col-8 col-sm-10">@Model.Taille</dd>
+                    <dt class="col-4 col-sm-2">Type Écran</dt>
+                    <dd class="col-8 col-sm-10">@Model.TypeEcran</dd>
+                    <dt class="col-4 col-sm-2">Temps de Réponse</dt>
+                    <dd class="col-8 col-sm-10">@Model.TempsDeReponse</dd>
+                }
+            </dl>
+        </div>
+        <div class="button-group">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Modifier</a>
+            <a asp-action="Index" class="btn btn-secondary">Retour</a>
+        </div>
+    </div>
 </div>
 
-<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Modifier</a>
-<a asp-action="Index" class="btn btn-secondary">Retour</a>
+<style>
+    /* Global styles */
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background-color: #f2f4f8;
+        color: #1f2937;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Container */
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 2rem 1rem;
+        background: linear-gradient(145deg, #e2e8f0 0%, #f1f5f9 100%);
+    }
+
+    /* Card styling */
+    .card {
+        background-color: #ffffff;
+        padding: 1.5rem;
+        border-radius: 16px;
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+        max-width: 90%;
+        width: 640px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
+        }
+
+    /* Heading */
+    h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1a202c;
+        text-align: center;
+        margin-bottom: 1.5rem;
+        letter-spacing: -0.025em;
+    }
+
+    /* Description list */
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0;
+    }
+
+        .row dt {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #374151;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e5e7eb;
+            background-color: #f9fafb;
+            flex: 0 0 33.3333%;
+            max-width: 33.3333%;
+        }
+
+        .row dd {
+            font-size: 0.95rem;
+            color: #1f2937;
+            padding: 0.75rem 0;
+            margin: 0;
+            border-bottom: 1px solid #e5e7eb;
+            flex: 0 0 66.6667%;
+            max-width: 66.6667%;
+        }
+
+    /* Buttons */
+    .btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.95rem;
+        font-weight: 500;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        margin: 0.5rem;
+        text-align: center;
+    }
+
+    .btn-warning {
+        background-color: #f59e0b;
+        color: #ffffff;
+        flex: 1 1 auto;
+    }
+
+        .btn-warning:hover {
+            background-color: #d97706;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+    .btn-secondary {
+        background-color: #6b7280;
+        color: #ffffff;
+        flex: 1 1 auto;
+    }
+
+        .btn-secondary:hover {
+            background-color: #4b5563;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(75, 85, 99, 0.3);
+        }
+
+    /* Button group */
+    .button-group {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 1.5rem;
+        gap: 1rem;
+    }
+</style>

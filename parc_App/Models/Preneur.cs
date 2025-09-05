@@ -1,4 +1,6 @@
-﻿namespace parc_App.Models
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+
+namespace parc_App.Models
 {
     public class Preneur
     {
@@ -6,12 +8,14 @@
         public string Nom { get; set; }
         public string Prenom { get; set; }
         public string Email { get; set; }
+        // Navigation vers les matériels (optionnel si relation inverse définie)
+        public int? DepartementId { get; set; }
+        public Departement? Departement { get; set; }
+
         public string Telephone { get; set; }
-        public string Departement { get; set; }
         public bool IsDeleted { get; set; } = false;
 
 
-        // Navigation vers les matériels (optionnel si relation inverse définie)
 
 
         // Liste des matériels affectés

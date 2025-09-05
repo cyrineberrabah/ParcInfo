@@ -6,8 +6,8 @@
         public string Marque { get; set; }
         public string Modele { get; set; }
         public string NumeroSerie { get; set; }
-        public string Etat { get; set; }
-        public string Description { get; set; }
+        public string? Etat { get; set; }
+        public string? Description { get; set; }
 
         public string? OS { get; set; }
         public string? RAM { get; set; }

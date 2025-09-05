@@ -23,5 +23,7 @@ namespace parc_App.Models
         [Required]
         [MaxLength(255)]
         public string MotDePasse { get; set; }
+        public string Role { get; set; } // <- Nouveau
+
     }
 }

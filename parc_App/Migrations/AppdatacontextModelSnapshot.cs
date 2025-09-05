@@ -22,6 +22,23 @@ namespace parc_App.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("parc_App.Models.Departement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Nom")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Departements");
+                });
+
             modelBuilder.Entity("parc_App.Models.HistoriqueAffectation", b =>
                 {
                     b.Property<int>("Id")
@@ -82,11 +99,9 @@ namespace parc_App.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Etat")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
@@ -114,6 +129,9 @@ namespace parc_App.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("RAM")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Reference")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Resolution")
@@ -165,9 +183,8 @@ namespace parc_App.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Departement")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("DepartementId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -189,6 +206,8 @@ namespace parc_App.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DepartementId");
 
                     b.ToTable("Preneurs");
                 });
@@ -221,6 +240,10 @@ namespace parc_App.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Users");
@@ -252,6 +275,21 @@ namespace parc_App.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Preneur");
+                });
+
+            modelBuilder.Entity("parc_App.Models.Preneur", b =>
+                {
+                    b.HasOne("parc_App.Models.Departement", "Departement")
+                        .WithMany("Preneurs")
+                        .HasForeignKey("DepartementId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Departement");
+                });
+
+            modelBuilder.Entity("parc_App.Models.Departement", b =>
+                {
+                    b.Navigation("Preneurs");
                 });
 
             modelBuilder.Entity("parc_App.Models.Preneur", b =>

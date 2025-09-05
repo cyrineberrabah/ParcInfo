@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using parc_App.Models;
 using parc_App.Models;
 using parc_App.ViewModel;
-using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Threading.Tasks;
-using parc_App.Models;
 
 namespace parc_App.Controllers
 {
@@ -21,39 +22,66 @@ namespace parc_App.Controllers
             _logger = logger;
         }
 
-        // GET: liste des matériels avec pagination
         [HttpGet]
-        public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
+        public async Task<IActionResult> Index(string typeMateriel, string etat, int page = 1, int pageSize = 10)
         {
-            var totalMateriels = await _context.Materiels.CountAsync(); // inclut les matériels supprimés
+            // Requête de base sur les matériels
+            var query = _context.Materiels.AsQueryable();
 
+            // Filtrage par type
+            if (!string.IsNullOrEmpty(typeMateriel))
+            {
+                query = query.Where(m => m.TypeMateriel == typeMateriel);
+            }
+
+            // Filtrage par état
+            if (!string.IsNullOrEmpty(etat))
+            {
+                query = query.Where(m => m.Etat == etat);
+            }
+
+            var totalMateriels = await query.CountAsync();
             var totalPages = (int)Math.Ceiling(totalMateriels / (double)pageSize);
 
-            var model = await _context.Materiels
-       .Include(m => m.Preneur)
-       .OrderBy(m => m.Id)
-       .Skip((page - 1) * pageSize)
-       .Take(pageSize)
-       .Select(m => new MaterielAffectationViewModel
-       {
-           MaterielId = m.Id,
-           TypeMateriel = m.TypeMateriel,
-           Marque = m.Marque,
-           Modele = m.Modele,
-           Etat = m.IsDeleted ? "Amorti" : m.Etat,  // <-- état amorti si supprimé
-           PreneurId = m.PreneurId,
-           PreneurNomComplet = m.Preneur != null ? m.Preneur.Nom + " " + m.Preneur.Prenom : null
-       })
-       .ToListAsync();
+            var model = await query
+                .OrderBy(m => m.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(m => new MaterielAffectationViewModel
+                {
+                    MaterielId = m.Id,
+                    TypeMateriel = m.TypeMateriel,
+                    Marque = m.Marque,
+                    Modele = m.Modele,
+                    Etat = m.IsDeleted ? "Amorti" : m.Etat,
+                    PreneurNomComplet = m.Preneur != null ? m.Preneur.Nom + " " + m.Preneur.Prenom : null
+                })
+                .ToListAsync();
 
+            // Remplir la liste déroulante des types disponibles
+            var types = await _context.Materiels
+                .Select(m => m.TypeMateriel)
+                .Distinct()
+                .ToListAsync();
+
+            ViewBag.TypeMaterielOptions = types
+                .Select(t => new SelectListItem { Value = t, Text = t, Selected = t == typeMateriel })
+                .ToList();
+
+            // Liste déroulante des états
+            var etats = new List<string> { "Disponible", "Occupé" };
+            ViewBag.EtatOptions = etats
+                .Select(e => new SelectListItem { Value = e, Text = e, Selected = e == etat })
+                .ToList();
+
+            // Pagination
             ViewBag.CurrentPage = page;
             ViewBag.TotalPages = totalPages;
-            ViewBag.PageSize = pageSize;
-            ViewBag.TotalMateriels = totalMateriels;
+            ViewBag.SelectedTypeMateriel = typeMateriel;
+            ViewBag.SelectedEtat = etat;
 
             return View(model);
         }
-
 
 
 
@@ -85,7 +113,9 @@ namespace parc_App.Controllers
             return View(vm);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Affecter(int id, int? preneurId) // <- int? ici
         {
             var materiel = await _context.Materiels.FindAsync(id);

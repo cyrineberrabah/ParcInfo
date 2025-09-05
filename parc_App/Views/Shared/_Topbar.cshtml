@@ -1,0 +1,25 @@
+﻿@* _Topbar.cshtml *@
+<nav class="topbar navbar navbar-expand navbar-dark bg-primary fixed-top" style="left: 0; width: 100%; z-index:1060;">
+    <div class="container-fluid">
+        <span class="navbar-brand mb-0 h1">Parc App</span>
+        <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+                <span class="nav-link text-white">
+                    <i class="fas fa-user-circle me-2"></i>
+                    @User.Identity.Name
+                </span>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<style>
+    .topbar {
+        height: 60px;
+    }
+
+    /* Ajuste le padding du body pour que le contenu ne soit pas caché par la topbar */
+    body {
+        padding-top: 60px;
+    }
+</style>

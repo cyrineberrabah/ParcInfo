@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<parc_App.Models.Preneur>
+
 @{
     ViewData["Title"] = "Liste des Preneurs";
 }
@@ -6,120 +7,161 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round" />
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 
 <style>
-    body { color: #566787; background: #f5f5f5; font-family: 'Varela Round', sans-serif; font-size: 13px; }
-    .table-responsive { margin: 30px 0; overflow-x: auto; }
-    .table-wrapper { background: #fff; padding: 20px 25px; border-radius: 3px; box-shadow: 0 1px 1px rgba(0,0,0,0.05); width: 100%; }
-    .table-title { padding-bottom: 15px; background: #435d7d; color: #fff; padding: 16px 30px; margin: -20px -25px 10px; border-radius: 3px 3px 0 0; }
-    .table-title h2 { margin: 5px 0 0; font-size: 24px; }
+    body {
+        color: #566787;
+        background: #f5f5f5;
+        font-family: 'Varela Round',sans-serif;
+        font-size: 13px;
+    }
+
+    .table-responsive {
+        margin: 30px 0;
+    }
+
+    .table-wrapper {
+        background: #fff;
+        padding: 20px 25px;
+        border-radius: 3px;
+        box-shadow: 0 1px 1px rgba(0,0,0,0.05);
+        width: 100%;
+    }
+
+    .table-title {
+        padding: 16px 30px;
+        margin: -20px -25px 10px;
+        background: #435d7d;
+        color: #fff;
+        border-radius: 3px 3px 0 0;
+    }
+
+        .table-title h2 {
+            margin: 5px 0 0;
+            font-size: 24px;
+        }
 
         .table-title .btn {
             color: #fff;
             float: right;
             font-size: 13px;
-            background: #2196F3;
+            background: #19b5fe;
             border: none;
             min-width: 50px;
             border-radius: 2px;
+            outline: none !important;
             margin-left: 10px;
         }
-    .table td i { font-size: 19px; }
-    .table td a { color: #566787; text-decoration: none; }
-    .table td a.edit { color: #FFC107; }
-    .table td a.delete { color: #F44336; }
-    .table td a:hover { color: #2196F3; }
+
+    .table td i {
+        font-size: 19px;
+    }
+
+    .table td a {
+        color: #566787;
+        text-decoration: none;
+        margin-right: 5px;
+    }
+
+        .table td a.edit {
+            color: #FFC107;
+        }
+
+        .table td a.delete {
+            color: #F44336;
+        }
+
+        .table td a.details {
+            color: #17a2b8;
+        }
+
+        .table td a.history {
+            color: #6f42c1;
+        }
+
+        .table td a:hover {
+            color: #2196F3;
+        }
 </style>
 
-<div class="container-xl">
+<div class="container-fluid">
     <div class="table-responsive">
         <div class="table-wrapper">
             <div class="table-title row mb-3">
                 <div class="col-sm-6"><h2>Gérer <b>les Preneurs</b></h2></div>
                 <div class="col-sm-6 text-right">
-                    <a asp-controller="Preneurs" asp-action="Create" class="btn btn-success">
-                        <i class="material-icons">&#xE147;</i> Ajouter
-                    </a>
+                    @* Bouton Ajouter redirige vers Create.cshtml *@
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a class="btn btn-success" asp-action="Create" asp-controller="Preneurs">
+                            <i class="material-icons">&#xE147;</i> Ajouter
+                        </a>
+                    }
                 </div>
             </div>
 
-            <!-- Recherche et filtrage -->
-            <form method="get" class="row g-2 mb-3">
+            <!-- Recherche et tri -->
+            <form id="filterForm" method="get" class="row g-2 mb-3">
                 <div class="col-auto">
-                    <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="Rechercher un preneur" />
+                    <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="Rechercher un preneur" id="searchInput" />
                 </div>
                 <div class="col-auto">
-                    <select name="departement" class="form-select">
-                        <option value="">Tous les départements</option>
-                        @foreach (var dep in ViewBag.Departements)
-                        {
-                            if (dep == ViewBag.SelectedDepartement)
-                            {
-                                <option value="@dep" selected>@dep</option>
-                            }
-                            else
-                            {
-                                <option value="@dep">@dep</option>
-                            }
-                        }
-                    </select>
-
-                </div>
-                <div class="col-auto">
-                    <select name="sortOrder" class="form-select">
+                    <select name="sortOrder" class="form-select" id="sortOrderSelect">
                         @if (ViewBag.SortOrder == "asc")
                         {
                             <option value="asc" selected>A → Z</option>
+                            <option value="desc">Z → A</option>
                         }
                         else
                         {
                             <option value="asc">A → Z</option>
-                        }
-
-                        @if (ViewBag.SortOrder == "desc")
-                        {
                             <option value="desc" selected>Z → A</option>
-                        }
-                        else
-                        {
-                            <option value="desc">Z → A</option>
                         }
                     </select>
                 </div>
-
-                <div class="col-auto">
-                    <button type="submit" class="btn btn-primary">Filtrer</button>
-                </div>
             </form>
 
-            <!-- Table -->
+            <!-- Tableau Preneurs -->
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
                         <th>Nom</th>
                         <th>Prénom</th>
                         <th>Email</th>
-                        <th>Téléphone</th>
                         <th>Département</th>
+                        <th>Téléphone</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach(var preneur in Model)
+                    @if (Model != null && Model.Any())
                     {
-                        <tr data-id="@preneur.Id" data-nom="@preneur.Nom" data-prenom="@preneur.Prenom" data-email="@preneur.Email" data-telephone="@preneur.Telephone" data-departement="@preneur.Departement">
-                            <td>@preneur.Nom</td>
-                            <td>@preneur.Prenom</td>
-                            <td>@preneur.Email</td>
-                            <td>@preneur.Telephone</td>
-                            <td>@preneur.Departement</td>
-                            <td>
-                                <a asp-controller="Preneurs" asp-action="Details" asp-route-id="@preneur.Id"><i class="material-icons">&#xE8F4;</i></a>
-                                <a href="#" class="edit" data-toggle="modal" data-target="#editPreneurModal"><i class="material-icons">&#xE254;</i></a>
-                                <a href="#" class="delete" data-toggle="modal" data-target="#deletePreneurModal"><i class="material-icons">&#xE872;</i></a>
-                                <a asp-controller="Preneurs" asp-action="HistoriquePreneur" asp-route-id="@preneur.Id" class="btn btn-info btn-sm">Historique</a>
-                            </td>
-                        </tr>
+                        foreach (var preneur in Model)
+                        {
+                            <tr data-id="@preneur.Id"
+                                data-nom="@preneur.Nom"
+                                data-prenom="@preneur.Prenom"
+                                data-email="@preneur.Email"
+                                data-telephone="@preneur.Telephone"
+                                data-departementid="@preneur.DepartementId">
+                                <td>@preneur.Nom</td>
+                                <td>@preneur.Prenom</td>
+                                <td>@preneur.Email</td>
+                                <td>@preneur.Departement?.Nom</td>
+                                <td>@preneur.Telephone</td>
+                                <td>
+                                    <a href="#" class="material-icons edit" title="Modifier">&#xE254;</a>
+                                    <a href="#" class="material-icons delete" title="Supprimer">&#xE872;</a>
+                                    <a href="@Url.Action("Details", "Preneurs", new { id = preneur.Id })" class="material-icons details" title="Détails">&#xE8F4;</a>
+                                    <a href="@Url.Action("HistoriquePreneur", "Preneurs", new { id = preneur.Id })" class="material-icons history" title="Historique">&#xE889;</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="6" class="text-center">Aucun preneur trouvé.</td></tr>
                     }
                 </tbody>
             </table>
@@ -128,16 +170,16 @@
             <nav aria-label="Pagination">
                 <ul class="pagination justify-content-center">
                     <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
-                        <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage - 1, search = ViewBag.Search, departement = ViewBag.SelectedDepartement, sortOrder = ViewBag.SortOrder })">Précédent</a>
+                        <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage - 1, search = ViewBag.Search, sortOrder = ViewBag.SortOrder })">Précédent</a>
                     </li>
-                    @for(int i=1; i<=ViewBag.TotalPages; i++)
+                    @for (int i = 1; i <= ViewBag.TotalPages; i++)
                     {
                         <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
-                            <a class="page-link" href="@Url.Action("Index", new { page=i, search=ViewBag.Search, departement=ViewBag.SelectedDepartement, sortOrder=ViewBag.SortOrder })">@i</a>
+                            <a class="page-link" href="@Url.Action("Index", new { page = i, search = ViewBag.Search, sortOrder = ViewBag.SortOrder })">@i</a>
                         </li>
                     }
                     <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
-                        <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage + 1, search = ViewBag.Search, departement = ViewBag.SelectedDepartement, sortOrder = ViewBag.SortOrder })">Suivant</a>
+                        <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage + 1, search = ViewBag.Search, sortOrder = ViewBag.SortOrder })">Suivant</a>
                     </li>
                 </ul>
             </nav>
@@ -145,45 +187,43 @@
     </div>
 </div>
 
-<!-- Modals -->
-@* Ajouter *@
-<div id="addPreneurModal" class="modal fade" tabindex="-1">
-    <div class="modal-dialog">
-        <form asp-action="Create" method="post" class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Ajouter un Preneur</h5>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <input name="Nom" class="form-control mb-2" placeholder="Nom" required />
-                <input name="Prenom" class="form-control mb-2" placeholder="Prénom" required />
-                <input name="Email" type="email" class="form-control mb-2" placeholder="Email" required />
-                <input name="Telephone" class="form-control mb-2" placeholder="Téléphone" required />
-                <input name="Departement" class="form-control mb-2" placeholder="Département" required />
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
-                <button type="submit" class="btn btn-success">Ajouter</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-@* Modifier *@
+<!-- Modal Edit -->
 <div id="editPreneurModal" class="modal fade" tabindex="-1">
     <div class="modal-dialog">
-        <form asp-action="Edit" method="post" class="modal-content">
+        <form id="editPreneurForm" method="post" asp-action="Edit" class="modal-content">
+            @Html.AntiForgeryToken()
             <div class="modal-header">
                 <h5 class="modal-title">Modifier un Preneur</h5>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="editId" name="Id" />
-                <input type="text" id="editNom" name="Nom" class="form-control mb-2" placeholder="Nom" required />
-                <input type="text" id="editPrenom" name="Prenom" class="form-control mb-2" placeholder="Prénom" required />
-                <input type="email" id="editEmail" name="Email" class="form-control mb-2" placeholder="Email" required />
-                <input type="text" id="editTelephone" name="Telephone" class="form-control mb-2" placeholder="Téléphone" required />
-                <input type="text" id="editDepartement" name="Departement" class="form-control mb-2" placeholder="Département" required />
+                <div class="form-group">
+                    <label>Nom</label>
+                    <input type="text" id="editNom" name="Nom" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Prénom</label>
+                    <input type="text" id="editPrenom" name="Prenom" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="editEmail" name="Email" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label>Département</label>
+                    <select id="editDepartement" name="DepartementId" class="form-control">
+                        <option value="">Sélectionner un département</option>
+                        @foreach (var dep in ViewBag.Departements)
+                        {
+                            <option value="@dep.Id">@dep.Nom</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Téléphone</label>
+                    <input type="text" id="editTelephone" name="Telephone" class="form-control" />
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
@@ -193,16 +233,17 @@
     </div>
 </div>
 
-@* Supprimer *@
+<!-- Modal Delete -->
 <div id="deletePreneurModal" class="modal fade" tabindex="-1">
     <div class="modal-dialog">
-        <form asp-action="Delete" method="post" class="modal-content">
+        <form id="deletePreneurForm" method="post" asp-action="Delete" class="modal-content">
+            @Html.AntiForgeryToken()
             <div class="modal-header">
                 <h5 class="modal-title">Supprimer un Preneur</h5>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
-                <input type="hidden" id="deleteId" name="id" />
+                <input type="hidden" id="deleteId" name="Id" />
                 <p>Êtes-vous sûr de vouloir supprimer ce preneur ?</p>
             </div>
             <div class="modal-footer">
@@ -214,26 +255,66 @@
 </div>
 
 @section Scripts {
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-$(function(){
-    // remplir modal Edit
-    $('.edit').click(function(){
-        var row = $(this).closest('tr');
-        $('#editId').val(row.data('id'));
-        $('#editNom').val(row.data('nom'));
-        $('#editPrenom').val(row.data('prenom'));
-        $('#editEmail').val(row.data('email'));
-        $('#editTelephone').val(row.data('telephone'));
-        $('#editDepartement').val(row.data('departement'));
-    });
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(function(){
+            // Ouvrir modal Edit
+            $('.edit').click(function(e){
+                e.preventDefault();
+                var row = $(this).closest('tr');
+                $('#editId').val(row.data('id'));
+                $('#editNom').val(row.data('nom'));
+                $('#editPrenom').val(row.data('prenom'));
+                $('#editEmail').val(row.data('email'));
+                $('#editTelephone').val(row.data('telephone'));
+                $('#editDepartement').val(row.data('departementid'));
+                $('#editPreneurModal').modal('show');
+            });
 
-    // remplir modal Delete
-    $('.delete').click(function(){
-        var row = $(this).closest('tr');
-        $('#deleteId').val(row.data('id'));
-    });
-});
-</script>
+            // Soumettre Edit AJAX
+            $('#editPreneurForm').submit(function(e){
+                e.preventDefault();
+                $.ajax({
+                    url:'@Url.Action("Edit", "Preneurs")',
+                    type:'POST',
+                    data:$(this).serialize(),
+                    headers:{ 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() },
+                    success:function(response){
+                        if(response.success){
+                            $('#editPreneurModal').modal('hide');
+                            var row = $('tr[data-id="'+response.preneur.id+'"]');
+                            row.find('td:eq(0)').text(response.preneur.nom);
+                            row.find('td:eq(1)').text(response.preneur.prenom);
+                            row.find('td:eq(2)').text(response.preneur.email);
+                            row.find('td:eq(3)').text(response.preneur.departementNom);
+                            row.find('td:eq(4)').text(response.preneur.telephone);
+                            row.data('nom',response.preneur.nom);
+                            row.data('prenom',response.preneur.prenom);
+                            row.data('email',response.preneur.email);
+                            row.data('telephone',response.preneur.telephone);
+                            row.data('departementid',response.preneur.departementId);
+                        } else {
+                            alert('Erreur: '+(response.message||'Impossible de mettre à jour.'));
+                        }
+                    },
+                    error:function(xhr){
+                        let msg='Une erreur est survenue. Veuillez réessayer.';
+                        if(xhr.responseJSON && xhr.responseJSON.errors){
+                            msg=Object.values(xhr.responseJSON.errors).flat().join('\n');
+                        }
+                        alert(msg);
+                    }
+                });
+            });
+
+            // Modal Delete
+            $('.delete').click(function(e){
+                e.preventDefault();
+                var row = $(this).closest('tr');
+                $('#deleteId').val(row.data('id'));
+                $('#deletePreneurModal').modal('show');
+            });
+        });
+    </script>
 }

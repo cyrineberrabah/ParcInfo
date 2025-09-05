@@ -1,7 +1,261 @@
-﻿@{
-    Layout = "~/Views/Shared/_AdminLayout.cshtml";  // utilise le layout admin avec sidebar
+﻿@model IEnumerable<parc_App.Models.Materiel>
+@using System.Text.Json
+
+@{
     ViewData["Title"] = "Dashboard";
 }
 
-<h1>Bienvenue sur le Dashboard Admin</h1>
-<p>Voici le contenu spécifique à la page Dashboard.</p>
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Dashboard Admin</h1>
+</div>
+<div class="row">
+
+    <!-- Card Matériel -->
+    <div class="col-xl-4 col-md-6 mb-4 d-flex">
+        <div class="card border-left-primary shadow h-100 w-100 py-2">
+            <div class="card-body d-flex flex-column justify-content-between">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Matériels Disponibles
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.MaterielsCount</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-desktop fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card Preneurs -->
+    <div class="col-xl-4 col-md-6 mb-4 d-flex">
+        <div class="card border-left-success shadow h-100 w-100 py-2">
+            <div class="card-body d-flex flex-column justify-content-between">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Preneurs
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.PreneursCount</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card Dynamique avec select intégré -->
+    <div class="col-xl-4 col-md-6 mb-4 d-flex">
+        <div class="card border-left-warning shadow h-100 w-100 py-2">
+            <div class="card-body d-flex flex-column justify-content-between">
+                <div class="row no-gutters align-items-center mb-2">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1" id="dynamicCardTitle">
+                            Imprimantes Disponibles
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800" id="dynamicCardCount">
+                            @ViewBag.ImprimantesCount
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-print fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+
+                <!-- Select intégré -->
+                <div class="mt-2">
+                    <label for="materielTypeSelect" class="form-label small">Sélectionner le type :</label>
+                    <select id="materielTypeSelect" class="form-select form-select-sm">
+                        <option value="PC">PC</option>
+                        <option value="Imprimante" selected>Imprimante</option>
+                        <option value="Écran">Écran</option>
+                        <!-- autres types -->
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+<!-- Charts Row -->
+<div class="row">
+    <!-- Pie Chart -->
+    <div class="col-xl-4 col-lg-5 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Répartition par état</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="myPieChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Line Chart -->
+    <div class="col-xl-8 col-lg-7 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Évolution des affectations</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="affectationChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Progress Bars + Histogramme Row -->
+<div class="row">
+    <!-- Progress Bars -->
+    <div class="col-xl-4 col-lg-5 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Matériels par type</h6>
+            </div>
+            <div class="card-body">
+                @foreach (var t in ViewBag.TypeCounts)
+                {
+                    var percentage = (int)(100.0 * t.Count / ViewBag.TotalMateriels);
+                    var progressColor = t.Type switch
+                    {
+                        "PC" => "bg-danger",
+                        "Serveur" => "bg-warning",
+                        "Écran" => "bg-info",
+                        _ => "bg-success"
+                    };
+                    <h4 class="small font-weight-bold">@t.Type <span class="float-right">@t.Count</span></h4>
+                    <div class="progress mb-4">
+                        <div class="progress-bar @progressColor" role="progressbar"
+                             style="width: @percentage%" aria-valuenow="@percentage" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Histogramme Types vs États -->
+    <div class="col-xl-8 col-lg-7 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Types de matériels par état</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="typeEtatChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            $(function() {
+                // -------- PIE CHART --------
+                var pieCtx = document.getElementById("myPieChart").getContext('2d');
+                var pieLabels = @Html.Raw(JsonSerializer.Serialize(ViewBag.PieEtats));
+                var pieData = @Html.Raw(JsonSerializer.Serialize(ViewBag.PieCounts));
+
+                new Chart(pieCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: pieLabels,
+                        datasets: [{
+                            data: pieData,
+                            backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b'],
+                            hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', '#dda20a', '#be2617'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom' } },
+                        cutout: '60%'
+                    }
+                });
+
+                // -------- LINE CHART --------
+                var lineCtx = document.getElementById("affectationChart").getContext('2d');
+                var lineLabels = @Html.Raw(JsonSerializer.Serialize(ViewBag.AffectationDates ?? new List<string>()));
+                var lineData = @Html.Raw(JsonSerializer.Serialize(ViewBag.AffectationCounts ?? new List<int>()));
+
+                new Chart(lineCtx, {
+                    type: 'line',
+                    data: {
+                        labels: lineLabels,
+                        datasets: [{
+                            label: 'Nombre de matériels affectés',
+                            data: lineData,
+                            borderColor: '#4e73df',
+                            backgroundColor: 'rgba(78, 115, 223, 0.1)',
+                            fill: true,
+                            tension: 0.3
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'top' } },
+                        scales: {
+                            x: { title: { display: true, text: 'Date' } },
+                            y: { title: { display: true, text: 'Nombre de matériels' }, beginAtZero: true }
+                        }
+                    }
+                });
+
+                // -------- HISTOGRAMME Types vs États --------
+                var histoCtx = document.getElementById("typeEtatChart").getContext('2d');
+                var histoLabels = @Html.Raw(JsonSerializer.Serialize(ViewBag.TypeLabels));
+                var histoEtats = @Html.Raw(JsonSerializer.Serialize(ViewBag.EtatLabels));
+                var histoCounts = @Html.Raw(JsonSerializer.Serialize(ViewBag.TypeEtatCounts));
+
+                var datasets = [];
+                for (var i = 0; i < histoEtats.length; i++) {
+                    datasets.push({
+                        label: histoEtats[i],
+                        data: histoCounts[i],
+                        backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b'][i % 5]
+                    });
+                }
+
+                new Chart(histoCtx, {
+                    type: 'bar',
+                    data: { labels: histoLabels, datasets: datasets },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'top' } },
+                        scales: {
+                            x: { stacked: true, title: { display: true, text: 'Types de matériels' } },
+                            y: { stacked: true, beginAtZero: true, title: { display: true, text: 'Nombre' } }
+                        }
+                    }
+                });
+
+                // -------- CARD DYNAMIQUE --------
+                $('#materielTypeSelect').change(function() {
+                    var selectedType = $(this).val();
+                    $.ajax({
+                        url: '@Url.Action("GetMaterielCount", "Admin")',
+                        type: 'GET',
+                        data: { type: selectedType },
+                        success: function(count) {
+                            $('#dynamicCardCount').text(count);
+                            $('#dynamicCardTitle').text(selectedType + " Disponibles");
+                        },
+                        error: function() {
+                            alert('Erreur lors du chargement du nombre de matériels.');
+                        }
+                    });
+                });
+            });
+        </script>
+}

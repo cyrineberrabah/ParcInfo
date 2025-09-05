@@ -1,17 +1,21 @@
-﻿@model parc_App.Models.Preneur
+﻿@model parc_App.ViewModels.PreneurCreateViewModel
 
 <h2>Créer un preneur</h2>
 
 <form asp-action="Create" method="post">
     <div class="form-group mb-3">
         <label asp-for="Nom" class="form-label"></label>
-        <input asp-for="Nom" class="form-control" />
+        <input asp-for="Nom" class="form-control"
+               pattern="^[A-Za-zÀ-ÖØ-öø-ÿ\s\-]+$"
+               title="Le nom ne doit contenir que des lettres et espaces" />
         <span asp-validation-for="Nom" class="text-danger"></span>
     </div>
 
     <div class="form-group mb-3">
         <label asp-for="Prenom" class="form-label"></label>
-        <input asp-for="Prenom" class="form-control" />
+        <input asp-for="Prenom" class="form-control"
+               pattern="^[A-Za-zÀ-ÖØ-öø-ÿ\s\-]+$"
+               title="Le prénom ne doit contenir que des lettres et espaces" />
         <span asp-validation-for="Prenom" class="text-danger"></span>
     </div>
 
@@ -23,16 +27,19 @@
 
     <div class="form-group mb-3">
         <label asp-for="Telephone" class="form-label"></label>
-    
-        <input asp-for="Telephone" class="form-control" pattern="\d{8,15}" title="Entrez entre 8 et 15 chiffres" />
-
+        <input asp-for="Telephone" class="form-control"
+               pattern="^\d{8}$"
+               title="Le téléphone doit contenir exactement 8 chiffres" />
         <span asp-validation-for="Telephone" class="text-danger"></span>
     </div>
 
     <div class="form-group mb-3">
-        <label asp-for="Departement" class="form-label"></label>
-        <input asp-for="Departement" class="form-control" />
-        <span asp-validation-for="Departement" class="text-danger"></span>
+        <label asp-for="DepartementId" class="form-label"></label>
+        <select asp-for="DepartementId" class="form-control"
+                asp-items="@(new SelectList(ViewBag.Departements, "Id", "Nom"))">
+            <option value="">-- Sélectionnez un département --</option>
+        </select>
+        <span asp-validation-for="DepartementId" class="text-danger"></span>
     </div>
 
     <button type="submit" class="btn btn-primary">Ajouter</button>

@@ -10,38 +10,124 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 
 <style>
-    body { color: #566787; background: #f5f5f5; font-family: 'Varela Round',sans-serif; font-size: 13px; }
-    .table-responsive { margin: 30px 0; overflow-x: auto; }
-    .table-wrapper { background: #fff; padding: 20px 25px; border-radius: 3px; box-shadow: 0 1px 1px rgba(0,0,0,0.05); width: 100%; overflow-x: auto; }
-    .table-title { padding-bottom: 15px; background: #435d7d; color: #fff; padding: 16px 30px; margin: -20px -25px 10px; border-radius: 3px 3px 0 0; }
-    .table-title h2 { margin: 5px 0 0; font-size: 24px; }
-    .table-title .btn { color: #fff; float: right; font-size: 13px; background: #19b5fe; border: none; min-width: 50px; border-radius: 2px; outline: none !important; margin-left: 10px; }
-    .table td i { font-size: 19px; }
-    .table td a { color: #566787; text-decoration: none; }
-    .table td a.edit { color: #FFC107; }
-    .table td a.delete { color: #F44336; }
-    .table td a:hover { color: #2196F3; }
+    body {
+        color: #566787;
+        background: #f5f5f5;
+        font-family: 'Varela Round',sans-serif;
+        font-size: 13px;
+    }
+
+    .table-responsive {
+        margin: 30px 0;
+        overflow-x: auto;
+    }
+
+    .table-wrapper {
+        background: #fff;
+        padding: 20px 25px;
+        border-radius: 3px;
+        box-shadow: 0 1px 1px rgba(0,0,0,0.05);
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .table-title {
+        padding-bottom: 15px;
+        background: #435d7d;
+        color: #fff;
+        padding: 16px 30px;
+        margin: -20px -25px 10px;
+        border-radius: 3px 3px 0 0;
+    }
+
+        .table-title h2 {
+            margin: 5px 0 0;
+            font-size: 24px;
+        }
+
+        .table-title .btn {
+            color: #fff;
+            float: right;
+            font-size: 13px;
+            background: #19b5fe;
+            border: none;
+            min-width: 50px;
+            border-radius: 2px;
+            outline: none !important;
+            margin-left: 10px;
+        }
+
+    .table td i {
+        font-size: 19px;
+    }
+
+    .table td a {
+        color: #566787;
+        text-decoration: none;
+    }
+
+        .table td a.edit {
+            color: #FFC107;
+        }
+
+        .table td a.delete {
+            color: #F44336;
+        }
+
+        .table td a:hover {
+            color: #2196F3;
+        }
 </style>
 
-<div class="container-xl">
+<div class="container-fluid">
+
     <div class="table-responsive">
         <div class="table-wrapper">
             <div class="table-title row mb-3">
                 <div class="col-sm-6"><h2>Gérer <b>les Matériels</b></h2></div>
                 <div class="col-sm-6 text-right">
-                    <a asp-controller="Materiel" asp-action="Create" class="btn btn-success">
-                        <i class="material-icons">&#xE147;</i> Ajouter
-                    </a>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-controller="Materiel" asp-action="Create" class="btn btn-success">
+                            <i class="material-icons">&#xE147;</i> Ajouter
+                        </a>
+                    }
+                </div>
+            </div>
+            <div class="mb-3">
+                <form id="filterForm" class="row g-2 align-items-end">
+                    <div class="col-auto">
+                        <label>Date début</label>
+                        <input type="date" id="dateDebut" class="form-control" />
+                    </div>
+                    <div class="col-auto">
+                        <label>Date fin</label>
+                        <input type="date" id="dateFin" class="form-control" />
+                    </div>
+                </form>
+
+                <div class="row g-2 mt-2">
+                    <div class="col-auto">
+                        <a id="downloadExcel" class="btn btn-success">
+                            <i class="fas fa-file-excel"></i> Télécharger Excel
+                        </a>
+                    </div>
+                    <div class="col-auto">
+                        <a id="downloadPDF" class="btn btn-danger">
+                            <i class="fas fa-file-pdf"></i> Télécharger PDF
+                        </a>
+                    </div>
                 </div>
             </div>
 
+
             <!-- Recherche, filtrage et tri -->
-            <form method="get" class="row g-2 mb-3">
+            <form id="filterForm" method="get" class="row g-2 mb-3">
                 <div class="col-auto">
-                    <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="Rechercher un matériel" />
+                    <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="Rechercher un matériel" id="searchInput" />
                 </div>
                 <div class="col-auto">
-                    <select name="typeMateriel" class="form-select">
+                    <select name="typeMateriel" class="form-select" id="typeSelect">
                         <option value="">Tous les types</option>
                         @if (ViewBag.TypeMateriels != null)
                         {
@@ -49,7 +135,7 @@
                             {
                                 if (t == ViewBag.SelectedTypeMateriel)
                                 {
-                                    <option value="@t" selected>@t</option>
+                                    <option value="@t" selected="selected">@t</option>
                                 }
                                 else
                                 {
@@ -60,7 +146,15 @@
                     </select>
                 </div>
                 <div class="col-auto">
-                    <select name="sortOrder" class="form-select">
+                    <select name="etat" class="form-select" id="etatSelect">
+                        <option value="" selected="@(string.IsNullOrEmpty(ViewBag.Etat) ? "selected" : null)">Tous les états</option>
+                        <option value="Disponible" selected="@(ViewBag.Etat == "Disponible" ? "selected" : null)">Disponible</option>
+                        <option value="Occupé" selected="@(ViewBag.Etat == "Occupé" ? "selected" : null)">Occupé</option>
+                    </select>
+                </div>
+
+                <div class="col-auto">
+                    <select name="sortOrder" class="form-select" id="sortOrderSelect">
                         @if (ViewBag.SortOrder == "asc")
                         {
                             <option value="asc" selected>A → Z</option>
@@ -73,11 +167,7 @@
                         }
                     </select>
                 </div>
-                <div class="col-auto">
-                    <button type="submit" class="btn btn-primary">Filtrer</button>
-                </div>
             </form>
-            /form>
 
             <table class="table table-striped table-hover">
                 <thead>
@@ -88,6 +178,7 @@
                         <th>Numéro Série</th>
                         <th>État</th>
                         <th>Description</th>
+                        <th>Référence</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -103,17 +194,39 @@
                                 <td>@materiel.NumeroSerie</td>
                                 <td>@materiel.Etat</td>
                                 <td>@materiel.Description</td>
+
+                                <!-- Colonne Référence -->
+                                <td>
+                                    @if (User.IsInRole("Superviseur"))
+                                    {
+                                        <form asp-action="AddReference" method="post" style="display:inline;">
+                                            <input type="hidden" name="id" value="@materiel.Id" />
+                                            <input type="text" name="Reference" value="@materiel.Reference" class="form-control form-control-sm" style="width:120px; display:inline;" />
+                                            <button type="submit" class="btn btn-sm btn-primary">OK</button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        @materiel.Reference
+                                    }
+                                </td>
+
+                                <!-- Colonne Actions CRUD du matériel pour Admin -->
                                 <td>
                                     <a asp-controller="Materiel" asp-action="Details" asp-route-id="@materiel.Id" title="Voir le détail"><i class="material-icons">&#xE8F4;</i></a>
-                                    <a asp-controller="Materiel" asp-action="Edit" asp-route-id="@materiel.Id" title="Modifier"><i class="material-icons">&#xE254;</i></a>
-                                    <a asp-controller="Materiel" asp-action="Delete" asp-route-id="@materiel.Id" title="Supprimer"><i class="material-icons">&#xE872;</i></a>
+
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <a asp-controller="Materiel" asp-action="Edit" asp-route-id="@materiel.Id" title="Modifier"><i class="material-icons">&#xE254;</i></a>
+                                        <a asp-controller="Materiel" asp-action="Delete" asp-route-id="@materiel.Id" title="Supprimer"><i class="material-icons">&#xE872;</i></a>
+                                    }
                                 </td>
                             </tr>
                         }
                     }
                     else
                     {
-                        <tr><td colspan="7" class="text-center">Aucun matériel trouvé.</td></tr>
+                        <tr><td colspan="8" class="text-center">Aucun matériel trouvé.</td></tr>
                     }
                 </tbody>
             </table>
@@ -122,16 +235,16 @@
             <nav aria-label="Pagination">
                 <ul class="pagination justify-content-center">
                     <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
-                        <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage - 1, search=ViewBag.Search, typeMateriel=ViewBag.SelectedTypeMateriel, sortOrder=ViewBag.SortOrder })">Précédent</a>
+                        <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage - 1, search = ViewBag.Search, typeMateriel = ViewBag.SelectedTypeMateriel, etat = ViewBag.SelectedEtat, sortOrder = ViewBag.SortOrder })">Précédent</a>
                     </li>
                     @for (int i = 1; i <= ViewBag.TotalPages; i++)
                     {
                         <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
-                            <a class="page-link" href="@Url.Action("Index", new { page = i, search=ViewBag.Search, typeMateriel=ViewBag.SelectedTypeMateriel, sortOrder=ViewBag.SortOrder })">@i</a>
+                            <a class="page-link" href="@Url.Action("Index", new { page = i, search = ViewBag.Search, typeMateriel = ViewBag.SelectedTypeMateriel, etat = ViewBag.SelectedEtat, sortOrder = ViewBag.SortOrder })">@i</a>
                         </li>
                     }
                     <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
-                        <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage + 1, search=ViewBag.Search, typeMateriel=ViewBag.SelectedTypeMateriel, sortOrder=ViewBag.SortOrder })">Suivant</a>
+                        <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage + 1, search = ViewBag.Search, typeMateriel = ViewBag.SelectedTypeMateriel, etat = ViewBag.SelectedEtat, sortOrder = ViewBag.SortOrder })">Suivant</a>
                     </li>
                 </ul>
             </nav>
@@ -139,3 +252,82 @@
         </div>
     </div>
 </div>
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+
+            function filterTable() {
+                const search = $('#searchInput').val().toLowerCase();
+                const type = $('#typeSelect').val();
+                const etat = $('#etatSelect').val();
+
+                $('table tbody tr').each(function() {
+                    const row = $(this);
+                    const rowType = row.find('td:eq(0)').text().trim();
+                    const rowEtat = row.find('td:eq(4)').text().trim();
+
+                    let visible = true;
+
+                    if (search && !row.text().toLowerCase().includes(search)) visible = false;
+                    if (type && rowType !== type) visible = false;
+                    if (etat && rowEtat !== etat) visible = false;
+
+                    row.toggle(visible);
+                });
+            }
+
+            function updateLinks() {
+                const type = $('#typeSelect').val();
+                const etat = $('#etatSelect').val();
+                const dateDebut = $('#dateDebut').val();
+                const dateFin = $('#dateFin').val();
+
+                $('#downloadExcel').attr('href', `/Excel/ExportExcel?dateDebut=${encodeURIComponent(dateDebut)}&dateFin=${encodeURIComponent(dateFin)}&typeMateriel=${encodeURIComponent(type)}&etat=${encodeURIComponent(etat)}`);
+                $('#downloadPDF').attr('href', `/PDF/ExportPdf?dateDebut=${encodeURIComponent(dateDebut)}&dateFin=${encodeURIComponent(dateFin)}&typeMateriel=${encodeURIComponent(type)}&etat=${encodeURIComponent(etat)}`);
+            }
+
+            function validateDates() {
+                const dateDebut = $('#dateDebut').val();
+                const dateFin = $('#dateFin').val();
+
+                if(dateFin && !dateDebut) {
+                    alert("Vous devez renseigner la date de début si vous choisissez une date de fin !");
+                    return false;
+                }
+
+                if(dateDebut && dateFin && new Date(dateDebut) > new Date(dateFin)) {
+                    alert("La date de début ne peut pas être supérieure à la date de fin !");
+                    return false;
+                }
+
+                return true;
+            }
+
+            // Déclenche le filtrage et mise à jour des liens à chaque changement
+            $('#searchInput, #typeSelect, #etatSelect, #dateDebut, #dateFin').on('input change', function() {
+                if(validateDates()) {
+                    filterTable();
+                    updateLinks();
+                }
+            });
+
+            // Vérification au clic sur les boutons de téléchargement
+            $('#downloadExcel, #downloadPDF').on('click', function(e) {
+                if(!validateDates()) {
+                    e.preventDefault(); // empêche le téléchargement
+                    return false;
+                }
+            });
+
+            // Initialisation au chargement
+            if(validateDates()) {
+                filterTable();
+                updateLinks();
+            }
+
+        });
+    </script>
+}

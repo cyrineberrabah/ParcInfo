@@ -27,17 +27,23 @@ public class LoginController : Controller
         if (user != null)
         {
             var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.Email),
-                new Claim("Role", "Admin") // Facultatif
-            };
+        {
+            new Claim(ClaimTypes.Name, user.Email),
+            new Claim(ClaimTypes.Role, user.Role) // <- Utilise le rôle réel de l'utilisateur
+        };
 
             var identity = new ClaimsIdentity(claims, "MyCookieAuth");
             var principal = new ClaimsPrincipal(identity);
 
             await HttpContext.SignInAsync("MyCookieAuth", principal);
 
-            return RedirectToAction("Dashboard", "Admin");
+            // Rediriger automatiquement selon le rôle
+            if (user.Role == "Admin")
+                return RedirectToAction("Dashboard", "Admin");
+            else if (user.Role == "Superviseur")
+                return RedirectToAction("Dashboard", "Admin");
+            else
+                return RedirectToAction("Login1"); // par sécurité
         }
 
         ViewBag.Message = "Email ou mot de passe incorrect.";
